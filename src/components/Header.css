@@ -45,6 +45,11 @@
     position: relative; /* Make this position relative to position the count */
 }
 
+.cart-icon-container {
+    display: flex; /* Align icon and count in a column */
+    align-items: center; /* Center them */
+}
+
 .cart-count {
     position: absolute;
     top: -5px; /* Adjust as needed */

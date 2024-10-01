@@ -1,24 +1,31 @@
-// src/slices/exampleSlice.js
+// src/slices/cartSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
-const exampleSlice = createSlice({
-  name: 'example',
+const cartSlice = createSlice({
+  name: 'cart',
   initialState: {},
   reducers: {
-    // Define your reducers here
     addItem: (state, action) => {
-      // Example reducer to add an item
-      state[action.payload.id] = action.payload;
+      const { id, quantity } = action.payload;
+      // Add or update the item in the cart
+      state[id] = { 
+        ...(state[id] || {}), 
+        quantity: (state[id]?.quantity || 0) + quantity 
+      };
     },
     removeItem: (state, action) => {
-      // Example reducer to remove an item
+      // Remove the item from the cart
       delete state[action.payload.id];
+    },
+    clearCart: (state) => {
+      // Reset the cart to an empty object
+      return {};
     },
   },
 });
 
 // Export actions for use in components
-export const { addItem, removeItem } = exampleSlice.actions;
+export const { addItem, removeItem, clearCart } = cartSlice.actions;
 
 // Export the reducer to be used in the store
-export default exampleSlice.reducer;
+export default cartSlice.reducer;
