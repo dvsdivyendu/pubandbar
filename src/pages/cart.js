@@ -1,8 +1,9 @@
 // pages/Cart.js
 import React from 'react';
 import './cart.css'; // Import your CSS styles
-import { useCart } from '../context/CartContext'; // Importing the cart context
-import beer from '../assets/beer.jpg'; // Import your images as needed
+import { useSelector, useDispatch } from 'react-redux'; 
+import { removeItem, clearCart } from '../slices/slice';
+import beer from '../assets/beer.jpg'; 
 import food from '../assets/food.jpg';
 import Mojito from '../assets/mojito.jpg';
 import wings from '../assets/wings.jpg';
@@ -23,13 +24,19 @@ const menuItems = [
 ];
 
 const Cart = () => {
-    const { cart, removeFromCart, clearCart } = useCart(); // Use cart context
+    const dispatch = useDispatch();
+    const cart = useSelector(state => state.cart); // Access cart state
 
     // Calculate total price
     const totalPrice = Object.keys(cart).reduce((total, itemId) => {
         const item = menuItems.find(item => item.id === Number(itemId));
-        return total + (item ? item.price * cart[itemId] : 0);
+        return total + (item ? item.price * cart[itemId].quantity : 0);
     }, 0);
+
+    const handleCheckout = () => {
+        // Logic for proceeding to checkout can be added here
+        alert('Proceeding to checkout!');
+    };
 
     return (
         <div className="cart-container">
@@ -47,9 +54,10 @@ const Cart = () => {
                                         <img src={item.image} alt={item.name} className="cart-item-image" />
                                         <div className="cart-item-details">
                                             <h3>{item.name}</h3>
-                                            <p>Quantity: {cart[itemId]}</p>
-                                            <p>Price: ${(item.price * cart[itemId]).toFixed(2)}</p>
-                                            <button onClick={() => removeFromCart(itemId)}>Remove</button>
+                                            <p>Price: ${(item.price).toFixed(2)}</p>
+                                            <p>Quantity: {cart[itemId].quantity}</p>
+                                            <p>Total: ${(item.price * cart[itemId].quantity).toFixed(2)}</p>
+                                            <button onClick={() => dispatch(removeItem({ id: itemId }))}>Remove</button>
                                         </div>
                                     </div>
                                 )
@@ -58,7 +66,8 @@ const Cart = () => {
                     </div>
                     <div className="cart-summary">
                         <h2>Total Price: ${totalPrice.toFixed(2)}</h2>
-                        <button className="clear-cart" onClick={clearCart}>Clear Cart</button>
+                        <button className="clear-cart" onClick={() => dispatch(clearCart())}>Clear Cart</button>
+                        <button className="checkout-button" onClick={handleCheckout}>Checkout</button>
                     </div>
                 </div>
             )}

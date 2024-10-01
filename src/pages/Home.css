@@ -12,7 +12,7 @@
   padding: 292px 20px; /* Maintain padding for spacing
   text-align: center;
   color: white; /* Text color for visibility */
-  background-image: url('C:/Users/divyendu.vikramsingh/Desktop/PubandBar/pub/src/assets/background.jpg'); /* Ensure correct path */
+  background-image: url('../assets/background.jpg'); /* Ensure correct path */
   background-size: cover; /* Cover the entire section */
   background-position: center; /* Center the image */
   position: relative; /* Ensure content is positioned relative */
