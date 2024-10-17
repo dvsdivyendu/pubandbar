@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './signup.css';
+import { toast } from 'react-toastify';
 
 const Signup = ({ setToast }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    role: 'user', // Default role
   });
   const [error, setError] = useState('');
 
@@ -26,7 +29,7 @@ const Signup = ({ setToast }) => {
     return password.length >= 6; // Example validation (at least 6 characters)
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validate email and password
@@ -39,29 +42,25 @@ const Signup = ({ setToast }) => {
       return;
     }
 
-    // Retrieve existing user data from local storage
-    const existingData = JSON.parse(localStorage.getItem('userData')) || [];
+    try {
+      // Make API call to signup
+      const response = await axios.post('http://localhost:5000/api/auth/signup', {
+        email: formData.email, // Change from username to email
+        password: formData.password,
+        role: formData.role, // Include role if your API supports it
+      });
 
-    // Ensure existingData is an array
-    if (!Array.isArray(existingData)) {
-      setError('Error retrieving user data. Please try again.');
-      return;
+      // Optionally handle success (e.g., show a toast message or redirect)
+      setToast('Signup successful! Please log in.');
+      setFormData({ email: '', password: '', role: 'user' }); // Reset form
+    } catch (error) {
+      // Handle errors (e.g., user already exists)
+      if (error.response && error.response.status === 409) {
+        setError('Email already exists. Please log in or use a different email.');
+      } else {
+        setError('Error signing up. Please try again.');
+      }
     }
-
-    // Check for duplicate email
-    if (existingData.some(user => user.email === formData.email)) {
-      setError('Email already exists. Please log in or use a different email.');
-      return;
-    }
-
-    // Add the new user data to the array
-    existingData.push(formData);
-
-    // Save the updated array back to local storage
-    localStorage.setItem('userData', JSON.stringify(existingData));
-
-    // Show success message
-    setToast('Signup successful! Please log in.');
   };
 
   return (
@@ -90,6 +89,19 @@ const Signup = ({ setToast }) => {
             onChange={handleChange}
             required
           />
+        </div>
+        <div className="form-group">
+          <label htmlFor="role">Role:</label>
+          <select
+            id="role"
+            name="role"
+            value={formData.role}
+            onChange={handleChange}
+            required
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
         </div>
         <button type="submit" className="submit-button">Sign Up</button>
       </form>

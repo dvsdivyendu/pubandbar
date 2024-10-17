@@ -59,9 +59,9 @@ const ContactPage = () => {
 
       <section className="contact-info">
         <h2>Contact Information</h2>
-        <p>Email: info@example.com</p>
-        <p>Phone: (123) 456-7890</p>
-        <p>Address: 123 Main St, Anytown, USA</p>
+        <p>Email: dvsdivyendu@gmail.com</p>
+        <p>Phone: 8010205744</p>
+        <p>Address: Plot No, A2, Maharaja Agrasen Marg, Sector 38, Noida, Uttar Pradesh 201301</p>
       </section>
 
       <section className="social-media">
