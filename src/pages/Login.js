@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { login } from '../slices/authSlice'; // Import the login action
 import './Login.css';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom'; // Import useNavigate
+import axios from 'axios'; // Import axios
 
 const Login = ({ setToast }) => {
+  const dispatch = useDispatch(); // Hook to access the dispatch function
+  const navigate = useNavigate(); // Initialize navigate function
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -23,25 +28,32 @@ const Login = ({ setToast }) => {
     return regex.test(email);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate email
     if (!validateEmail(formData.email)) {
       setError('Please enter a valid email address.');
       return;
     }
 
-    // Retrieve existing user data from local storage
-    const storedData = JSON.parse(localStorage.getItem('userData')) || [];
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/login', {
+        email: formData.email, // Change from username to email
+        password: formData.password,
+      });
 
-    // Check if the entered email and password match any stored user
-    const userExists = storedData.some(user => user.email === formData.email && user.password === formData.password);
+      // Assuming the API returns a token
+      localStorage.setItem('token', response.data.token);
+      
+      // Dispatch the login action with user data
+      dispatch(login({ email: formData.email, role: 'user' })); // Adjust role as needed
 
-    if (userExists) {
-      setToast('Login successful!');
-    } else {
+      // Navigate to the cart page
+      navigate('/cart'); // Redirect to the cart page
+    } catch (error) {
       setToast('Invalid email or password');
+      console.error(error);
     }
   };
 
